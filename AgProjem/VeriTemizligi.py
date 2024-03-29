@@ -1,6 +1,6 @@
 import pandas as pd
 
-df = pd.read_csv("/kaggle/input/trojan-detection-csv/Trojan_Detection.csv", sep = r',', skipinitialspace = True)
+df = pd.read_csv("Trojan_Detection.csv", sep = r',', skipinitialspace = True)
 
 df.head()
 
