@@ -3,10 +3,10 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 # Veri setini yükle
-df = pd.read_csv('/kaggle/input/trojan-detection-csv/Trojan_Detection.csv')  
+df = pd.read_csv('Trojan_Detection.csv')  
 
 # Veri setinin dosya yolunu düzenleyin
-df = pd.DataFrame(data)
+df = pd.DataFrame(df)
 
 # Trojen ve benign dosyaların sayısını source IP'ye göre karşılaştır
 plt.figure(figsize=(10, 6))
