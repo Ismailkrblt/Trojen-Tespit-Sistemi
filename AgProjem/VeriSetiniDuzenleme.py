@@ -1,4 +1,5 @@
 import pandas as pd
+from sklearn import preprocessing
 
 df = pd.read_csv("Trojan_Detection.csv", sep = r',', skipinitialspace = True)
 
@@ -9,7 +10,6 @@ df.drop(["Unnamed: 0"], axis = 1).values
 df = df.replace("Trojan", 1)
 df = df.replace("Benign", 0)
 
-from sklearn import preprocessing
 
 number = preprocessing.LabelEncoder()
 
