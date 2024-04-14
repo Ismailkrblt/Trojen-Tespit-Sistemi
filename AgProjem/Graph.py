@@ -14,8 +14,8 @@ def yazdirilamayan_karakterleri_düzenle(text):
 data = pd.read_csv("Trojan_Detection.csv")
 
 # Kaynak ve hedef IP adreslerini listeye dönüştür (yazdirilamayan_karakterleri_düzenle uygula)
-kaynak_ipler = data[" Source IP"].apply(yazdirilamayan_karakterleri_düzenle).tolist()
-hedef_ipler = data[" Destination IP"].apply(yazdirilamayan_karakterleri_düzenle).tolist()
+kaynak_ipler = data["Source IP"].apply(yazdirilamayan_karakterleri_düzenle).tolist()
+hedef_ipler = data["Destination IP"].apply(yazdirilamayan_karakterleri_düzenle).tolist()
 
 # Veri setinde hata kontrolü
 print(data.dtypes)
