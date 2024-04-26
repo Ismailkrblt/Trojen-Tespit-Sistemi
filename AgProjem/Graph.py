@@ -6,7 +6,7 @@ import re
 import ipaddress
 
 # Veri setini yükle
-data = pd.read_csv("Trojan_Detection.csv")
+data = pd.read_csv("/kaggle/input/trojan-detection-csv/Trojan_Detection.csv")
 
 # Eksik değerleri kontrol et
 print("Eksik Değerler:")
