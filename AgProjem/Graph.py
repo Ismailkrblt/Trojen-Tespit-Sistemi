@@ -16,10 +16,10 @@ print(data.isnull().sum())
 print("\nVeri Türleri:")
 print(data.dtypes)
 
-# IP adreslerini düzelt ve sayısal değere dönüştür
-def duzelt_ve_donus(ip):
+# IP adreslerini doğrula ve sayısal değere dönüştür
+def validate_and_convert(ip):
     """Noktalı virgülü (,) ondalık noktaya (.) dönüştürür ve gereksiz boşlukları kaldırır."""
-    ip = re.sub(r'[^\d\-+\.]', "", ip).replace(",", ".")  # Noktalı virgülü ve gereksiz karakterleri temizle
+    ip = re.sub(r'[^\d\.]', "", ip).replace(",", ".")  # Noktalı virgülü ve gereksiz karakterleri temizle
     try:
         # IP adresini IPv4Address nesnesine dönüştür
         ip = ipaddress.IPv4Address(ip)
@@ -27,9 +27,9 @@ def duzelt_ve_donus(ip):
     except ipaddress.AddressValueError:
         return None  # Geçersiz IP adresi ise None döndür
 
-# IP adreslerini düzelt ve sayısal değere dönüştür
-data[" Source IP"] = data[" Source IP"].apply(duzelt_ve_donus)
-data[" Destination IP"] = data[" Destination IP"].apply(duzelt_ve_donus)
+# IP adreslerini doğrula ve sayısal değere dönüştür
+data[" Source IP"] = data[" Source IP"].apply(validate_and_convert)
+data[" Destination IP"] = data[" Destination IP"].apply(validate_and_convert)
 
 # Eksik veya geçersiz IP adreslerini içeren satırları kaldır
 data = data.dropna(subset=[" Source IP", " Destination IP"])
@@ -38,24 +38,8 @@ data = data.dropna(subset=[" Source IP", " Destination IP"])
 G = nx.Graph()
 
 # Her bağlantıyı bir kenar olarak ekle
-for i in range(len(data)):
-    G.add_edge(data[" Source IP"].iloc[i], data[" Destination IP"].iloc[i])
-
-# Her köşeye "Trojan" veya "Benign" etiketi ekle
-for i in range(len(data)):
-    source_ip = data[" Source IP"].iloc[i]
-    dest_ip = data[" Destination IP"].iloc[i]
-    if source_ip not in G.nodes:
-        G.add_node(source_ip)
-    if dest_ip not in G.nodes:
-        G.add_node(dest_ip)
-    # Düğümlerin "Class" özelliğini ekle
-    if data["Class"].iloc[i] == 1:
-        G.nodes[source_ip]["Class"] = "Trojan"
-        G.nodes[dest_ip]["Class"] = "Trojan"
-    else:
-        G.nodes[source_ip]["Class"] = "Benign"
-        G.nodes[dest_ip]["Class"] = "Benign"
+for _, row in data.iterrows():
+    G.add_edge((row[" Source IP"], row[" Source Port"]), (row[" Destination IP"], row[" Destination Port"]), Class=row["Class"])
 
 # Grafı görselleştir
 plt.figure(figsize=(15, 10))
@@ -64,11 +48,12 @@ plt.figure(figsize=(15, 10))
 pos = nx.kamada_kawai_layout(G)
 
 # Her bir düğüm için uygun renkleri oluştur
-renkler = ["red" if G.nodes[node].get("Class") == "Trojan" else "green" for node in G.nodes]
+colors = {"Trojan": "red", "Benign": "green"}
+node_colors = [colors[G.nodes[node].get("Class", "Benign")] for node in G.nodes]
 
 # Grafı düzenle
 plt.title("Trojen ve Benign Bağlantılar")
-nx.draw_networkx_nodes(G, pos, node_color=renkler, node_size=300, alpha=0.7)
+nx.draw_networkx_nodes(G, pos, node_color=node_colors, node_size=300, alpha=0.7)
 nx.draw_networkx_edges(G, pos, width=2, alpha=0.5)  # Kenarları kalınlaştıralım
 nx.draw_networkx_labels(G, pos, font_size=8)  # Düğüm etiketlerini ekle
 plt.axis('off')
