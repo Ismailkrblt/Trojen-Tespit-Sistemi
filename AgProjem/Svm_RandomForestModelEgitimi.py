@@ -56,7 +56,7 @@ print("Random Forest Doğruluk:", rf_accuracy)
 print("SVM Eğitim Süresi:", svm_training_time, "saniye")
 print("Random Forest Eğitim Süresi:", rf_training_time, "saniye")
 
-# Sınıflandırma raporunu yazdırın
+
 print("SVM Sınıflandırma Raporu:")
 print(classification_report(y_test, svm_predictions))
 
@@ -71,5 +71,5 @@ results = pd.DataFrame({
 plt.figure(figsize=(10, 5))
 sns.barplot(x="Model", y="Accuracy", data=results)
 plt.title("Model Doğruluk Karşılaştırması")
-plt.ylim(0, 1)  # Doğruluk değerleri 0 ile 1 arasında olmalı
+plt.ylim(0, 1)  
 plt.show()
