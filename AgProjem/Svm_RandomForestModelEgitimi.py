@@ -10,21 +10,17 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import time
 
-# Veri setini yükleyin (örnek için ilk 1000 satır)
 data = pd.read_csv("Trojan_Detection.csv", nrows=1000)
 
-# Özellikler ve etiketler arasında ayırma yapın
 X = data.drop(columns=['Class'])
 y = data['Class']
 
-# Sayısal ve kategorik sütunları seçin
 numeric_columns = X.select_dtypes(include=['float64', 'int64']).columns
 categorical_columns = X.select_dtypes(include=['object']).columns
 
 # Veriyi eğitim ve test setlerine ayırın
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Pipeline oluşturun: Sayısal sütunları ölçeklendirin, kategorik sütunları kodlayın
 numeric_transformer = Pipeline(steps=[
     ('scaler', StandardScaler())
 ])
@@ -37,25 +33,21 @@ preprocessor = ColumnTransformer(
         ('cat', categorical_transformer, categorical_columns)
     ])
 
-# Destek Vektör Makineleri (SVM) modelini eğitin
 start_time = time.time()
 svm_model = Pipeline(steps=[('preprocessor', preprocessor),
                             ('classifier', SVC(kernel='rbf', C=0.1, gamma='scale'))])
 svm_model.fit(X_train, y_train)
 svm_training_time = time.time() - start_time
 
-# Random Forest modelini eğitin
 start_time = time.time()
 rf_model = Pipeline(steps=[('preprocessor', preprocessor),
                            ('classifier', RandomForestClassifier(n_estimators=50, random_state=42))])
 rf_model.fit(X_train, y_train)
 rf_training_time = time.time() - start_time
 
-# Modelleri test seti üzerinde değerlendirin
 svm_predictions = svm_model.predict(X_test)
 rf_predictions = rf_model.predict(X_test)
 
-# Doğruluk ve diğer performans metriklerini hesaplayın
 svm_accuracy = accuracy_score(y_test, svm_predictions)
 rf_accuracy = accuracy_score(y_test, rf_predictions)
 
@@ -71,13 +63,11 @@ print(classification_report(y_test, svm_predictions))
 print("Random Forest Sınıflandırma Raporu:")
 print(classification_report(y_test, rf_predictions))
 
-# Doğruluk oranlarını ve sınıflandırma raporlarını içeren bir veri çerçevesi oluşturun
 results = pd.DataFrame({
     "Model": ["SVM", "Random Forest"],
     "Accuracy": [svm_accuracy, rf_accuracy]
 })
 
-# Doğruluk oranlarını gösteren çubuk grafiği oluşturun
 plt.figure(figsize=(10, 5))
 sns.barplot(x="Model", y="Accuracy", data=results)
 plt.title("Model Doğruluk Karşılaştırması")
